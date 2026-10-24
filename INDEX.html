@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HULK: GAMMA SMASH EXPERIENCE</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Orbitron & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'gamma-neon': '#22C55E',
+                        'gamma-bright': '#10B981',
+                        'hulk-purple': '#8B5CF6',
+                        'hulk-deep-purple': '#6D28D9',
+                        'bg-dark-purple': '#160B29',
+                        'bg-card-purple': '#23123D',
+                        'hulk-yellow': '#EAB308',
+                        'hulk-red': '#EF4444',
+                        'brick-red': '#881337',
+                        'brick-dark': '#4C0519'
+                    },
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'sans-serif'],
+                        'sans': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* PALETA SIN NEGRO PURO - FONDO PÚRPURA DE CÓMIC CON PATRÓN DE PUNTOS HALFTONE */
+        body {
+            background-color: #160B29;
+            color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(rgba(34, 197, 94, 0.15) 2px, transparent 2px),
+                radial-gradient(circle at 15% 15%, rgba(34, 197, 94, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(139, 92, 246, 0.2) 0%, transparent 45%);
+            background-size: 24px 24px, 100% 100%, 100% 100%;
+        }
+
+        /* ESTILO COMIC PANEL CON BORDES TIPO TINTA */
+        .comic-panel {
+            background-color: #23123D;
+            border: 4px solid #160B29;
+            box-shadow: 8px 8px 0px #6D28D9, 12px 12px 0px #160B29;
+            position: relative;
+        }
+
+        .comic-panel-green {
+            background-color: #23123D;
+            border: 4px solid #160B29;
+            box-shadow: 8px 8px 0px #22C55E, 12px 12px 0px #160B29;
+            position: relative;
+        }
+
+        /* BADGES Y BOCADILLOS TIPO CÓMIC */
+        .comic-badge {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border: 3px solid #160B29;
+            box-shadow: 3px 3px 0px #160B29;
+            transform: rotate(-2deg);
+            display: inline-block;
+        }
+
+        /* NEON GLOWS Y ESTILO MARVEL */
+        .neon-text-green {
+            color: #22C55E;
+            text-shadow: 3px 3px 0px #160B29, 0 0 12px rgba(34, 197, 94, 0.8);
+        }
+
+        .neon-text-yellow {
+            color: #EAB308;
+            text-shadow: 3px 3px 0px #160B29, 0 0 12px rgba(234, 179, 8, 0.8);
+        }
+
+        /* TARJETAS CON EFECTO DE FRACTURA DESTRUCCIÓN REAL (DESTRUCTIBLE CARDS) */
+        .destructible-card {
+            position: relative;
+            background-color: #23123D;
+            border: 3px solid #6D28D9;
+            box-shadow: 6px 6px 0px #160B29;
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .destructible-card .crack-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .destructible-card:hover .crack-canvas {
+            opacity: 1;
+        }
+
+        .destructible-card:hover {
+            border-color: #22C55E;
+            box-shadow: 10px 10px 0px #22C55E, 14px 14px 0px #160B29;
+            transform: translate(-2px, -2px);
+        }
+
+        .destructible-card .card-content {
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        .destructible-card:hover .card-content {
+            filter: contrast(1.2) brightness(1.1);
+        }
+
+        /* TEXTO CRASH OVERLAY AL HOVER */
+        .destructible-card::after {
+            content: '💥 SMASH!';
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 2.2rem;
+            color: #EF4444;
+            text-shadow: 0 0 15px #EAB308, 4px 4px 0px #160B29;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+            opacity: 0;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            z-index: 30;
+        }
+
+        .destructible-card:hover::after {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1) rotate(-5deg);
+        }
+
+        /* CANVAS DEL MURO DE LADRILLOS DESTRUÍBLE */
+        #brickWallCanvas {
+            cursor: crosshair;
+            touch-action: none;
+            background: #1C0B23;
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), 6px 6px 0px #160B29;
+            border: 4px solid #160B29;
+        }
+
+        /* BOTONES CYBER/MARVEL ESTILO CÓMIC */
+        .btn-modern-green {
+            background: #22C55E;
+            color: #160B29;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            border: 3px solid #160B29;
+            box-shadow: 4px 4px 0px #160B29;
+            transition: all 0.15s ease;
+        }
+
+        .btn-modern-green:hover {
+            background: #4ADE80;
+            box-shadow: 6px 6px 0px #EAB308, 8px 8px 0px #160B29;
+            transform: translate(-2px, -2px);
+        }
+
+        .btn-modern-red {
+            background: #EF4444;
+            color: #FFFFFF;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            border: 3px solid #160B29;
+            box-shadow: 4px 4px 0px #160B29;
+            transition: all 0.15s ease;
+        }
+
+        .btn-modern-red:hover {
+            background: #F87171;
+            box-shadow: 6px 6px 0px #EAB308, 8px 8px 0px #160B29;
+            transform: translate(-2px, -2px);
+        }
+
+        /* OVERLAY EXPLOSIÓN DE INICIO */
+        #introOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background-color: #160B29;
+            background-image: 
+                radial-gradient(rgba(34, 197, 94, 0.2) 2px, transparent 2px),
+                radial-gradient(circle at 50% 50%, rgba(109, 40, 217, 0.4) 0%, transparent 70%);
+            background-size: 24px 24px, 100% 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+        }
+
+        #introOverlay.exploded {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        #explosionCanvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 105;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <!-- OVERLAY IMPACTANTE DE ENTRADA CON EXPLOSIÓN -->
+    <div id="introOverlay">
+        <canvas id="explosionCanvas"></canvas>
+        <div class="relative z-10 text-center px-4 max-w-3xl space-y-6">
+            <div class="comic-badge bg-hulk-yellow text-bg-dark-purple text-sm sm:text-base animate-pulse">
+                <i class="fa-solid fa-triangle-exclamation text-hulk-red mr-1"></i> ADVERTENCIA DE RADIACIÓN GAMMA HIGH-LEVEL
+            </div>
+
+            <h1 class="font-orbitron font-black text-4xl sm:text-7xl leading-none text-white uppercase drop-shadow-2xl">
+                HULK <br><span class="neon-text-green text-5xl sm:text-8xl">GAMMA SMASH</span>
+            </h1>
+
+            <p class="text-gray-200 text-base sm:text-xl font-bold max-w-xl mx-auto bg-bg-card-purple/90 p-4 border-2 border-hulk-purple rounded-xl shadow-2xl">
+                HAZ CLICK EN EL BOTÓN PARA DESATAR LA EXPLOSIÓN GAMMA Y ACCEDER AL EXPEDIENTE SUPREMO DE MARVEL.
+            </p>
+
+            <div class="pt-4">
+                <button id="smashTriggerBtn" onclick="triggerGammaExplosion()" class="btn-modern-green px-8 py-5 text-xl sm:text-2xl rounded-xl cursor-pointer shadow-2xl hover:scale-105 transform transition duration-150 flex items-center gap-3 mx-auto">
+                    <i class="fa-solid fa-hand-fist text-3xl animate-bounce"></i>
+                    <span>¡GOLPEAR PARA ENTRAR!</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR MODERNA CON ESTILO CÓMIC -->
+    <nav class="sticky top-0 z-50 bg-bg-dark-purple/95 backdrop-blur-md border-b-4 border-hulk-purple px-4 py-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl sm:text-3xl font-orbitron font-black neon-text-green tracking-widest flex items-center gap-2">
+                    <i class="fa-solid fa-hand-fist text-hulk-yellow text-2xl animate-pulse"></i>
+                    HULK // SMASH HUB
+                </span>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button onclick="openQRModal()" class="btn-modern-green px-4 py-2 text-sm sm:text-base flex items-center gap-2">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>ESCANEAR QR</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO / BANNER PRINCIPAL MODERNO ESTILO CÓMIC -->
+    <header class="relative px-4 py-8 sm:py-12 max-w-7xl mx-auto w-full">
+        <div class="comic-panel-green rounded-2xl p-6 sm:p-10 relative overflow-hidden">
+            <!-- Glow de Fondo -->
+            <div class="absolute -top-20 -left-20 w-80 h-80 bg-gamma-neon/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -right-20 w-80 h-80 bg-hulk-purple/30 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                <div class="lg:col-span-7 space-y-5">
+                    <div class="comic-badge bg-hulk-yellow text-bg-dark-purple text-xs sm:text-sm">
+                        <i class="fa-solid fa-burst text-hulk-red mr-1"></i> MARVEL ARCHIVE // GAMMA LEVEL MAXIMUM
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <h1 class="font-orbitron font-black text-4xl sm:text-6xl lg:text-6xl leading-tight text-white uppercase drop-shadow-lg">
+                            FUERZA <span class="neon-text-green">DESATADA.</span><br>
+                            GOLPE <span class="neon-text-yellow">IMPARABLE.</span>
+                        </h1>
+
+                        <!-- IMAGEN HULK OFICIAL A LA DERECHA DEL TÍTULO -->
+                        <div class="w-40 h-48 sm:w-52 sm:h-60 relative shrink-0 self-center sm:self-auto group transform rotate-2">
+                            <div class="absolute -inset-2 bg-hulk-yellow rounded-xl blur-sm opacity-80 group-hover:opacity-100 transition duration-300"></div>
+                            <img src="https://i.pinimg.com/736x/43/ec/f4/43ecf40de0604e15b799837ccc9e7411.jpg" 
+                                 alt="Hulk Smash Classic" 
+                                 class="relative w-full h-full object-contain rounded-lg border-4 border-bg-dark-purple shadow-2xl transition-transform duration-300 group-hover:scale-105"
+                                 onerror="this.onerror=null; this.src='https://placehold.co/300x350/23123D/22C55E?text=HULK+SMASH';">
+                        </div>
+                    </div>
+
+                    <p class="text-gray-200 text-base sm:text-lg leading-relaxed font-semibold max-w-2xl bg-bg-dark-purple/80 p-4 border-l-4 border-gamma-neon rounded">
+                        Afectado por la detonación de la bomba Gamma, el <strong class="text-gamma-neon">Dr. Bruce Banner</strong> posee la fuerza física más devastadora del universo Marvel. Toca o interactúa para romper el muro con el impacto directo del puño de Hulk.
+                    </p>
+
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <a href="#muro-smash" class="btn-modern-green px-6 py-3 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-hand-fist"></i>
+                            GOLPEAR EL MURO
+                        </a>
+                        <a href="#mcu-section" class="btn-modern-green px-6 py-3 text-base flex items-center gap-2 bg-hulk-purple text-white border-bg-dark-purple hover:bg-hulk-deep-purple">
+                            <i class="fa-solid fa-film"></i>
+                            HULK EN EL UCM
+                        </a>
+                        <a href="#comics-famosos" class="btn-modern-red px-6 py-3 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-book-open"></i>
+                            CÓMICS FAMOSOS
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tarjeta Demo Destruible Estilo Cómic -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="destructible-card w-full max-w-md p-6 rounded-xl relative group">
+                        <canvas class="crack-canvas" data-card="hero"></canvas>
+                        
+                        <div class="card-content space-y-4">
+                            <div class="flex justify-between items-center border-b-2 border-hulk-purple/50 pb-3">
+                                <span class="comic-badge bg-gamma-neon text-bg-dark-purple text-xs">ESTADO DE RADIACIÓN</span>
+                                <span class="bg-hulk-red text-white text-xs font-black px-2 py-1 rounded border-2 border-bg-dark-purple">CRÍTICO</span>
+                            </div>
+
+                            <div class="text-center py-6">
+                                <i class="fa-solid fa-burst text-6xl text-gamma-neon mb-3 animate-bounce"></i>
+                                <h3 class="font-orbitron font-black text-2xl text-white uppercase tracking-wider">GAMMA CORE</h3>
+                            </div>
+
+                            <div class="bg-bg-dark-purple p-3 rounded-lg border-2 border-hulk-purple text-xs font-mono text-gray-200 flex justify-between font-bold">
+                                <span>RESISTENCIA DE CONCRETO: 0%</span>
+                                <span class="text-hulk-yellow">ESTRUCTURA: ROTA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECCIÓN CLAVE 1: MURO DE LADRILLOS CON PUÑO EXACTO Y FONDO TRANSPARENTE -->
+    <section id="muro-smash" class="max-w-7xl mx-auto px-4 py-8 w-full">
+        <div class="comic-panel rounded-2xl p-6 sm:p-8 relative shadow-2xl">
+            <div class="text-center max-w-3xl mx-auto space-y-3 mb-6">
+                <span class="comic-badge bg-hulk-yellow text-bg-dark-purple text-xs">SIMULADOR DE IMPACTO DIRECTO</span>
+                <h2 class="font-orbitron font-black text-3xl sm:text-5xl text-white uppercase">
+                    MURO DE LADRILLOS <span class="neon-text-green">HULK SMASH</span>
+                </h2>
+                <p class="text-sm sm:text-base text-gray-200 font-semibold">
+                    ¡Haz <strong>CLICK o TAP</strong> en cualquier punto del muro! Se estampará el puño sin fondo blanco liberando ondas e impactos directos.
+                </p>
+            </div>
+
+            <!-- Contenedor del Canvas Muro -->
+            <div class="relative w-full max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl">
+                <canvas id="brickWallCanvas" width="900" height="480" class="w-full h-[360px] sm:h-[480px] block"></canvas>
+                
+                <!-- Panel de Controles sobre el Muro -->
+                <div class="absolute bottom-4 left-4 right-4 flex flex-wrap justify-between items-center bg-bg-dark-purple/90 backdrop-blur-md p-3 rounded-lg border-2 border-hulk-purple gap-2">
+                    <div class="flex items-center space-x-3">
+                        <span class="font-orbitron text-xs sm:text-sm text-gamma-neon font-black">PUÑETAZOS TOTALES: <strong id="impactCount" class="text-white text-lg">0</strong></span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="repairWall()" class="btn-modern-green px-3 py-1.5 text-xs flex items-center gap-1">
+                            <i class="fa-solid fa-rotate"></i>
+                            REPARAR MURO
+                        </button>
+                        <button onclick="superSmash()" class="btn-modern-red px-3 py-1.5 text-xs flex items-center gap-1">
+                            <i class="fa-solid fa-bomb"></i>
+                            SUPER SMASH COMBO
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN CLAVE: HULK EN EL UNIVERSO CINEMATOGRÁFICO DE MARVEL (UCM) -->
+    <section id="mcu-section" class="max-w-7xl mx-auto px-4 py-8 w-full">
+        <div class="comic-panel-green rounded-2xl p-6 sm:p-10 relative shadow-2xl overflow-hidden">
+            
+            <div class="text-center max-w-3xl mx-auto space-y-3 mb-10">
+                <span class="comic-badge bg-hulk-red text-white text-xs">MARVEL CINEMATIC UNIVERSE</span>
+                <h2 class="font-orbitron font-black text-3xl sm:text-5xl text-white uppercase">
+                    EL GIGANTE VERDE EN EL <span class="neon-text-green">UCM</span>
+                </h2>
+                <p class="text-sm sm:text-base text-gray-200 font-semibold">
+                    Interpretado de forma icónica por <strong class="text-gamma-neon">Mark Ruffalo</strong>, Hulk se convirtió en uno de los pilares fundadores de Los Vengadores en la pantalla grande.
+                </p>
+            </div>
+
+            <!-- GRID PRINCIPAL DE HULK EN EL UCM CON IMAGEN DE MARK RUFFALO -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- FOTO PRINCIPAL MARK RUFFALO / HULK EN EL UCM -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="destructible-card p-4 rounded-xl w-full max-w-md group">
+                        <canvas class="crack-canvas" data-card="mcu-ruffalo"></canvas>
+                        
+                        <div class="card-content space-y-4">
+                            <div class="relative rounded-lg overflow-hidden border-4 border-bg-dark-purple shadow-2xl">
+                                <img src="https://i.pinimg.com/1200x/db/16/6d/db166d1d10d1efe6a4db9a1d8dbdacde.jpg" 
+                                     alt="Mark Ruffalo como Hulk en el UCM" 
+                                     class="w-full h-auto object-cover rounded"
+                                     onerror="this.onerror=null; this.src='https://placehold.co/500x600/23123D/22C55E?text=MARK+RUFFALO+HULK';">
+                                <div class="absolute top-2 left-2 comic-badge bg-gamma-neon text-bg-dark-purple text-xs">
+                                    MARK RUFFALO // UCM
+                                </div>
+                            </div>
+
+                            <div class="bg-bg-dark-purple p-3.5 rounded-lg border-2 border-hulk-purple space-y-2">
+                                <h3 class="font-orbitron font-black text-lg text-white uppercase">
+                                    "Ese es mi secreto, Capitán... Siempre estoy enojado."
+                                </h3>
+                                <p class="text-xs text-gray-300 leading-relaxed">
+                                    Desde su debut en <strong class="text-hulk-yellow">The Avengers (2012)</strong>, Mark Ruffalo trajo un equilibrio perfecto entre la vulnerabilidad del Dr. Bruce Banner y la fuerza bruta e incontrolable del coloso esmeralda.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HITOS DEL UCM EN TARJETAS DESTRUÍBLES -->
+                <div class="lg:col-span-7 space-y-5">
+                    
+                    <div class="destructible-card p-5 rounded-xl">
+                        <canvas class="crack-canvas" data-card="mcu-avengers"></canvas>
+                        <div class="card-content space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="comic-badge bg-hulk-yellow text-bg-dark-purple text-xs">2012 - THE AVENGERS</span>
+                                <i class="fa-solid fa-shield-halved text-hulk-yellow text-xl"></i>
+                            </div>
+                            <h4 class="font-orbitron font-black text-xl text-white uppercase">EL GOLPE A LEVIATÁN Y LOKI</h4>
+                            <p class="text-xs sm:text-sm text-gray-200 leading-relaxed">
+                                En la Batalla de Nueva York, Hulk protagonizó dos de los momentos más épicos de la historia del cine de superhéroes: detener a un gigantesco Leviatán Chitauri de un solo puñetazo y estampar a Loki repetidamente contra el suelo (*"Dios endeble"*).
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="destructible-card p-5 rounded-xl">
+                        <canvas class="crack-canvas" data-card="mcu-ragnarok"></canvas>
+                        <div class="card-content space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="comic-badge bg-hulk-red text-white text-xs">2017 - THOR: RAGNAROK</span>
+                                <i class="fa-solid fa-khanda text-hulk-red text-xl"></i>
+                            </div>
+                            <h4 class="font-orbitron font-black text-xl text-white uppercase">GLADIADOR EN SAAR</h4>
+                            <p class="text-xs sm:text-sm text-gray-200 leading-relaxed">
+                                Adaptando libremente la trama de *Planet Hulk*, Bruce permaneció como Hulk durante dos años en el planeta Sakaar, convirtiéndose en el campeón indiscutible de la arena del Gran Maestro antes de enfrentarse a su amigo Thor.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="destructible-card p-5 rounded-xl">
+                        <canvas class="crack-canvas" data-card="mcu-endgame"></canvas>
+                        <div class="card-content space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="comic-badge bg-gamma-neon text-bg-dark-purple text-xs">2019 - AVENGERS: ENDGAME</span>
+                                <i class="fa-solid fa-hand-sparkles text-gamma-neon text-xl"></i>
+                            </div>
+                            <h4 class="font-orbitron font-black text-xl text-white uppercase">PROFESSOR HULK Y EL CHASKIDO</h4>
+                            <p class="text-xs sm:text-sm text-gray-200 leading-relaxed">
+                                Tras 18 meses de laboratorio, Banner logró fusionar el cerebro del científico con la fuerza desmedida de Hulk. Fue el único héroe capaz de resistir la radiación del Guantelete del Infinito para chasquear los dedos y traer de vuelta a la mitad del universo.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN CLAVE 2: HISTORIA Y LORE -->
+    <main id="historia" class="max-w-7xl mx-auto px-4 py-12 space-y-10 w-full">
+        <div class="text-center space-y-2">
+            <span class="comic-badge bg-gamma-neon text-bg-dark-purple text-xs">EXPEDIENTES ARCHIVADOS MARVEL</span>
+            <h2 class="font-orbitron font-black text-3xl sm:text-5xl text-white uppercase">
+                HISTORIA Y <span class="neon-text-green">PERSONALIDADES</span>
+            </h2>
+        </div>
+
+        <!-- GRID DE TARJETAS DESTRUÍBLES Y ALTAMENTE VISUALES -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Tarjeta 1: Origen -->
+            <div class="destructible-card p-6 rounded-xl">
+                <canvas class="crack-canvas" data-card="c1"></canvas>
+                <div class="card-content space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="comic-badge bg-hulk-purple text-white text-xs">CAPÍTULO 01</span>
+                        <i class="fa-solid fa-bolt text-hulk-yellow text-2xl"></i>
+                    </div>
+                    <h3 class="font-orbitron font-black text-2xl text-white uppercase">EL ORIGEN: LA BOMBA GAMMA</h3>
+                    
+                    <!-- IMAGEN ILUSTRACIÓN DE ORIGEN -->
+                    <div class="relative rounded-lg overflow-hidden border-4 border-bg-dark-purple shadow-xl">
+                        <img src="https://i.pinimg.com/1200x/bd/d1/48/bdd148c381c175df3f018b1ec027c54d.jpg" 
+                             alt="Hulk Origen Gamma Bomb" 
+                             class="w-full h-52 object-cover"
+                             onerror="this.onerror=null; this.src='https://placehold.co/500x300/23123D/22C55E?text=ORIGEN+GAMMA';">
+                    </div>
+
+                    <p class="text-gray-200 text-sm leading-relaxed font-normal">
+                        Durante un experimento con la Bomba Gamma en Nuevo México, el científico <strong>Bruce Banner</strong> corrió a rescatar al adolescente Rick Jones, quien había entrado sin autorización al campo de pruebas. Banner salvó a Jones empujándolo a una trinchera, pero él absorbió toda la radiación, mutando sus células e hiper-activando su rabia reprimida.
+                    </p>
+                    <div class="bg-bg-dark-purple p-3 rounded-lg border-2 border-hulk-purple text-xs text-gray-300">
+                        <strong class="text-gamma-neon">Dato de Cómic:</strong> Originalmente en 1962 (Incredible Hulk #1), la piel de Hulk era gris. Stan Lee la cambió a verde en el número 2 debido a problemas de impresión con el tono gris.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: Personalidades -->
+            <div class="destructible-card p-6 rounded-xl">
+                <canvas class="crack-canvas" data-card="c2"></canvas>
+                <div class="card-content space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="comic-badge bg-hulk-yellow text-bg-dark-purple text-xs">CAPÍTULO 02</span>
+                        <i class="fa-solid fa-masks-theater text-gamma-neon text-2xl"></i>
+                    </div>
+                    <h3 class="font-orbitron font-black text-2xl text-white uppercase">ALTER EGOS DE HULK</h3>
+                    
+                    <!-- IMAGEN NUEVA DE PERSONALIDADES E HISTORIAL (REEMPLAZO) -->
+                    <div class="relative rounded-lg overflow-hidden border-4 border-bg-dark-purple shadow-xl">
+                        <img src="https://i.pinimg.com/736x/be/9a/ce/be9ace46b0cea92f736f0b9a5c6a234c.jpg" 
+                             alt="Hulk Personalidades e Historial" 
+                             class="w-full h-64 object-cover object-top"
+                             onerror="this.onerror=null; this.src='https://placehold.co/500x300/23123D/EAB308?text=ALTER+EGOS';">
+                    </div>
+
+                    <p class="text-gray-200 text-sm leading-relaxed">
+                        El trauma psicológico de Banner fragmentó su mente en múltiples personalidades gamma:
+                    </p>
+                    <ul class="space-y-2 text-xs sm:text-sm text-gray-200 font-semibold">
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-3 border border-bg-dark-purple bg-gamma-neon inline-block"></span>
+                            <strong class="text-white">Savage Hulk:</strong> El gigante verde clásico, emocionalmente como un niño pero con fuerza ilimitada.
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-3 border border-bg-dark-purple bg-gray-400 inline-block"></span>
+                            <strong class="text-white">Joe Fixit (Grey Hulk):</strong> Astuto matón nocturno de Las Vegas con traje a medida.
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-3 border border-bg-dark-purple bg-hulk-red inline-block"></span>
+                            <strong class="text-white">World War Hulk:</strong> Gladiador cósmico con intelecto táctico y la furia más destructiva registrada.
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-3 h-3 border border-bg-dark-purple bg-hulk-yellow inline-block"></span>
+                            <strong class="text-white">Immortal Hulk:</strong> Entidad terrorífica que jamás puede morir y revive al caer la noche.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3: Poderes -->
+            <div class="destructible-card p-6 rounded-xl md:col-span-2">
+                <canvas class="crack-canvas" data-card="c3"></canvas>
+                <div class="card-content space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="comic-badge bg-hulk-red text-white text-xs">CAPÍTULO 03</span>
+                        <i class="fa-solid fa-hand-fist text-hulk-red text-2xl"></i>
+                    </div>
+                    <h3 class="font-orbitron font-black text-2xl text-white uppercase">CAPACIDADES SOBREHUMANAS & FURIA</h3>
+                    
+                    <!-- IMAGEN DE PODERES Y RABIA REEMPLAZADA -->
+                    <div class="relative rounded-lg overflow-hidden border-4 border-bg-dark-purple shadow-xl">
+                        <img src="https://i.pinimg.com/736x/cb/dc/77/cbdc7764d85e7a9f7d0a2d2182b8f830.jpg" 
+                             alt="Hulk Powers Rage Artwork" 
+                             class="w-full h-72 object-cover object-top"
+                             onerror="this.onerror=null; this.src='https://placehold.co/800x300/23123D/EF4444?text=PODERES+HULK';">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-200 pt-2">
+                        <div class="bg-bg-dark-purple p-3 rounded-lg border-2 border-hulk-purple">
+                            <h4 class="font-bold text-gamma-neon uppercase font-orbitron">Fuerza Escalable</h4>
+                            <p class="text-xs mt-1">No existe límite en su potencia física. Mientras más rabia acumula, mayor es su densidad muscular y fuerza destructiva.</p>
+                        </div>
+                        <div class="bg-bg-dark-purple p-3 rounded-lg border-2 border-hulk-purple">
+                            <h4 class="font-bold text-gamma-neon uppercase font-orbitron">Regeneración Gamma</h4>
+                            <p class="text-xs mt-1">Regenera tejiendo células gamma instantáneamente, curando heridas mortales y daño tisular en segundos.</p>
+                        </div>
+                        <div class="bg-bg-dark-purple p-3 rounded-lg border-2 border-hulk-purple">
+                            <h4 class="font-bold text-gamma-neon uppercase font-orbitron">Salto Salto Salto</h4>
+                            <p class="text-xs mt-1">Sus poderosas piernas le permiten recorrer millas y cruzar océanos o continentes enteros de un solo salto.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- SECCIÓN CÓMICS FAMOSOS E ICÓNICOS DE HULK -->
+    <section id="comics-famosos" class="max-w-7xl mx-auto px-4 py-8 w-full">
+    <!-- SECCIÓN FUENTES CONFIABLES Y REFERENCIAS MARVEL -->
+    <section class="max-w-7xl mx-auto px-4 py-8 w-full">
+        <div class="comic-panel-green rounded-2xl p-6 sm:p-8 relative shadow-2xl">
+            <div class="flex items-center space-x-3 mb-4">
+                <i class="fa-solid fa-bookmark text-gamma-neon text-2xl"></i>
+                <h3 class="font-orbitron font-black text-xl sm:text-2xl text-white uppercase">
+                    FUENTES Y REFERENCIAS OFICIALES <span class="neon-text-green">MARVEL COMICS</span>
+                </h3>
+            </div>
+            <p class="text-xs sm:text-sm text-gray-200 mb-4 font-semibold">
+                Toda la información histórica, datos biográficos, apariciones en cómics y producciones cinematográficas documentadas en este sitio provienen directamente de los archivos oficiales de Marvel Entertainment:
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                <a href="https://www.marvel.com/characters/hulk" target="_blank" class="bg-bg-dark-purple p-3.5 rounded-lg border-2 border-hulk-purple hover:border-gamma-neon transition flex items-center justify-between group">
+                    <div>
+                        <strong class="text-white block font-orbitron group-hover:text-gamma-neon">Marvel.com Official</strong>
+                        <span class="text-gray-400">Perfil Canónico de Hulk</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-gamma-neon"></i>
+                </a>
+
+                <a href="https://marvel.fandom.com/wiki/Bruce_Banner_(Earth-616)" target="_blank" class="bg-bg-dark-purple p-3.5 rounded-lg border-2 border-hulk-purple hover:border-gamma-neon transition flex items-center justify-between group">
+                    <div>
+                        <strong class="text-white block font-orbitron group-hover:text-gamma-neon">Marvel Database (Earth-616)</strong>
+                        <span class="text-gray-400">Cronología e Historias</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-gamma-neon"></i>
+                </a>
+
+                <a href="https://www.marvel.com/comics/issue/9178/the_incredible_hulk_1962_1" target="_blank" class="bg-bg-dark-purple p-3.5 rounded-lg border-2 border-hulk-purple hover:border-gamma-neon transition flex items-center justify-between group">
+                    <div>
+                        <strong class="text-white block font-orbitron group-hover:text-gamma-neon">Incredible Hulk #1 (1962)</strong>
+                        <span class="text-gray-400">Stan Lee & Jack Kirby</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-gamma-neon"></i>
+                </a>
+
+                <a href="https://www.marvel.com/movies/the-avengers" target="_blank" class="bg-bg-dark-purple p-3.5 rounded-lg border-2 border-hulk-purple hover:border-gamma-neon transition flex items-center justify-between group">
+                    <div>
+                        <strong class="text-white block font-orbitron group-hover:text-gamma-neon">Marvel Studios MCU Archive</strong>
+                        <span class="text-gray-400">Apariciones cinematográficas</span>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-gamma-neon"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER MODERNO ESTILO CÓMIC -->
+    <footer class="bg-bg-dark-purple border-t-4 border-hulk-purple py-8 px-4 text-center mt-6">
+        <div class="max-w-7xl mx-auto space-y-4">
+            <span class="font-orbitron font-black text-xl text-gamma-neon tracking-widest uppercase drop-shadow">
+                HULK // GAMMA EXPERIENCE
+            </span>
+            <p class="text-xs text-gray-300 max-w-xl mx-auto font-semibold">
+                Optimizada para teléfonos móviles y computadoras. Escanea el código QR para probar la experiencia táctil.
+            </p>
+            <div>
+                <button onclick="openQRModal()" class="btn-modern-green px-6 py-2 text-xs">
+                    📱 ABRIR CÓDIGO QR MÓVIL
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL DE CÓDIGO QR -->
+    <div id="qrModal" class="fixed inset-0 bg-bg-dark-purple/95 backdrop-blur-lg z-50 hidden flex items-center justify-center p-4">
+        <div class="comic-panel-green rounded-2xl max-w-sm w-full p-6 text-center relative shadow-2xl">
+            <button onclick="closeQRModal()" class="absolute top-3 right-3 text-gray-300 hover:text-white font-black text-xl">
+                ✕
+            </button>
+
+            <div class="inline-block p-3 rounded-full bg-gamma-neon/20 border-2 border-gamma-neon mb-3">
+                <i class="fa-solid fa-qrcode text-gamma-neon text-2xl"></i>
+            </div>
+
+            <h3 class="font-orbitron font-black text-xl text-white mb-1 uppercase">
+                ESCANEAR CON MÓVIL
+            </h3>
+            <p class="text-xs text-gray-300 mb-4 font-semibold">
+                Usa tu cámara para abrir la web y golpear el muro directamente con tu pantalla táctil.
+            </p>
+
+            <div class="bg-white p-4 rounded-xl inline-block shadow-inner mb-4 border-4 border-bg-dark-purple">
+                <canvas id="qrCanvas" width="180" height="180"></canvas>
+            </div>
+
+            <button onclick="copyURL()" class="btn-modern-green w-full py-2.5 text-xs">
+                📋 COPIAR ENLACE
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS DE LÓGICA CON PROCESAMIENTO DE FONDO TRANSPARENTE DE LA IMAGEN DEL PUÑO -->
+    <script>
+        const brickCanvas = document.getElementById('brickWallCanvas');
+        const bCtx = brickCanvas.getContext('2d');
+        let totalHits = 0;
+        let fistStamps = [];
+        let rockParticles = [];
+
+        // Cargar imagen exacta del puño enviada por el usuario
+        const fistImage = new Image();
+        fistImage.crossOrigin = "anonymous";
+        fistImage.src = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKHZVdtCEQlisOyyd0tgskEwDH2DnyA-B_TC_9WU7Tu_eWyqyB61Xfl2vV&s=10';
+        
+        // Canvas en memoria para procesar y quitar el fondo blanco
+        let processedFistCanvas = document.createElement('canvas');
+        let pCtx = processedFistCanvas.getContext('2d');
+        let isFistImgProcessed = false;
+
+        fistImage.onload = function() {
+            // Dimensiones para el canvas en memoria
+            processedFistCanvas.width = fistImage.width;
+            processedFistCanvas.height = fistImage.height;
+            pCtx.drawImage(fistImage, 0, 0);
+
+            // Algoritmo de eliminación de fondo blanco/gris claro en memoria
+            try {
+                const imgData = pCtx.getImageData(0, 0, processedFistCanvas.width, processedFistCanvas.height);
+                const data = imgData.data;
+
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i];
+                    const g = data[i + 1];
+                    const b = data[i + 2];
+
+                    // Si el píxel es blanco o casi blanco (r, g, b > 220), hacerlo transparente
+                    if (r > 215 && g > 215 && b > 215) {
+                        data[i + 3] = 0; // Alpha 0
+                    }
+                }
+                pCtx.putImageData(imgData, 0, 0);
+                isFistImgProcessed = true;
+            } catch(e) {
+                // Si la protección CORS bloquea getImageData, usar la imagen de origen
+                isFistImgProcessed = true;
+            }
+        };
+
+        const BRICK_ROWS = 9;
+        const BRICK_COLS = 12;
+
+        // Renderizar base del muro de ladrillos estilo cómic
+        function drawBrickBase() {
+            bCtx.fillStyle = '#1C0B23';
+            bCtx.fillRect(0, 0, brickCanvas.width, brickCanvas.height);
+
+            const brickW = brickCanvas.width / BRICK_COLS;
+            const brickH = brickCanvas.height / BRICK_ROWS;
+
+            for (let r = 0; r < BRICK_ROWS; r++) {
+                const offsetX = (r % 2 === 0) ? 0 : brickW / 2;
+                for (let c = -1; c < BRICK_COLS + 1; c++) {
+                    const x = c * brickW + offsetX;
+                    const y = r * brickH;
+
+                    // Ladrillo estilo cómic
+                    bCtx.fillStyle = ( (r + c) % 2 === 0 ) ? '#6B1738' : '#4C0D26';
+                    bCtx.fillRect(x + 2, y + 2, brickW - 4, brickH - 4);
+
+                    // Textura de sombras y bordes de tinta
+                    bCtx.fillStyle = '#881337';
+                    bCtx.fillRect(x + 4, y + 4, brickW - 8, 4);
+                }
+            }
+        }
+
+        // Renderizado del Puño con Fondo Transparente
+        function drawHulkFistStamp(ctx, x, y, scale = 1) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.scale(scale, scale);
+
+            if (isFistImgProcessed) {
+                const imgW = 220;
+                const imgH = 220;
+                ctx.drawImage(processedFistCanvas, -imgW / 2, -imgH / 2, imgW, imgH);
+            } else if (fistImage.complete && fistImage.naturalWidth !== 0) {
+                const imgW = 220;
+                const imgH = 220;
+                ctx.drawImage(fistImage, -imgW / 2, -imgH / 2, imgW, imgH);
+            } else {
+                // Ilustración vectorial de respaldo
+                ctx.fillStyle = '#FACC15';
+                ctx.beginPath();
+                ctx.arc(0, 0, 75, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#22C55E';
+                ctx.beginPath();
+                ctx.arc(0, 0, 50, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            ctx.restore();
+        }
+
+        // Agregar un puñetazo al dar clic
+        function registerSmash(x, y) {
+            totalHits++;
+            document.getElementById('impactCount').textContent = totalHits;
+
+            // Registrar posición de la estampa
+            fistStamps.push({ x, y, scale: 0.9 + Math.random() * 0.25 });
+
+            // Generar trozos de rocas y esquirlas
+            for (let i = 0; i < 22; i++) {
+                rockParticles.push({
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 18,
+                    vy: (Math.random() - 0.5) * 18 - 3,
+                    size: Math.random() * 12 + 4,
+                    color: ['#EAB308', '#6D28D9', '#22C55E', '#881337', '#160B29'][Math.floor(Math.random() * 5)],
+                    life: 50
+                });
+            }
+        }
+
+        // Bucle de renderizado continuo
+        function mainRenderLoop() {
+            drawBrickBase();
+
+            // Redibujar todos los puños estampados
+            fistStamps.forEach(stamp => {
+                drawHulkFistStamp(bCtx, stamp.x, stamp.y, stamp.scale);
+            });
+
+            // Animación física de partículas/rocas
+            for (let i = 0; i < rockParticles.length; i++) {
+                let p = rockParticles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.45; // Gravedad
+                p.life--;
+
+                bCtx.fillStyle = p.color;
+                bCtx.fillRect(p.x, p.y, p.size, p.size);
+
+                if (p.life <= 0) {
+                    rockParticles.splice(i, 1);
+                    i--;
+                }
+            }
+
+            requestAnimationFrame(mainRenderLoop);
+        }
+
+        // Eventos de interacción en el Canvas Muro
+        brickCanvas.addEventListener('pointerdown', (e) => {
+            const rect = brickCanvas.getBoundingClientRect();
+            const scaleX = brickCanvas.width / rect.width;
+            const scaleY = brickCanvas.height / rect.height;
+
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            registerSmash(x, y);
+        });
+
+        function repairWall() {
+            fistStamps = [];
+            rockParticles = [];
+            totalHits = 0;
+            document.getElementById('impactCount').textContent = '0';
+        }
+
+        function superSmash() {
+            for (let i = 0; i < 6; i++) {
+                const x = 120 + Math.random() * (brickCanvas.width - 240);
+                const y = 100 + Math.random() * (brickCanvas.height - 200);
+                registerSmash(x, y);
+            }
+        }
+
+        // --- CANVASES DE FRACTURA DESTRUCCIÓN PARA TARJETAS HOVER ---
+        function initCardCrackCanvases() {
+            const cardCanvases = document.querySelectorAll('.crack-canvas');
+
+            cardCanvases.forEach(cCanvas => {
+                const parent = cCanvas.parentElement;
+                cCanvas.width = parent.offsetWidth;
+                cCanvas.height = parent.offsetHeight;
+
+                const ctx = cCanvas.getContext('2d');
+
+                parent.addEventListener('mouseenter', (e) => {
+                    ctx.clearRect(0, 0, cCanvas.width, cCanvas.height);
+
+                    const rect = parent.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const clickY = e.clientY - rect.top;
+
+                    // Fractura de concreto en el punto del cursor
+                    ctx.strokeStyle = '#22C55E';
+                    ctx.lineWidth = 3;
+                    ctx.shadowColor = '#22C55E';
+                    ctx.shadowBlur = 12;
+
+                    ctx.beginPath();
+                    ctx.arc(clickX, clickY, 22, 0, Math.PI * 2);
+                    ctx.fillStyle = '#160B29';
+                    ctx.fill();
+                    ctx.stroke();
+
+                    const numLines = 10;
+                    for (let i = 0; i < numLines; i++) {
+                        const angle = (i * Math.PI * 2) / numLines + (Math.random() * 0.2);
+                        let curX = clickX;
+                        let curY = clickY;
+
+                        ctx.beginPath();
+                        ctx.moveTo(curX, curY);
+
+                        for (let s = 0; s < 4; s++) {
+                            curX += Math.cos(angle) * 35 + (Math.random() * 16 - 8);
+                            curY += Math.sin(angle) * 35 + (Math.random() * 16 - 8);
+                            ctx.lineTo(curX, curY);
+                        }
+                        ctx.stroke();
+                    }
+                });
+            });
+        }
+
+        // GENERADOR DE QR
+        function generateQR() {
+            const qrC = document.getElementById('qrCanvas');
+            const qctx = qrC.getContext('2d');
+
+            qctx.fillStyle = '#FFFFFF';
+            qctx.fillRect(0, 0, 180, 180);
+
+            qctx.fillStyle = '#160B29';
+            qctx.fillRect(10, 10, 40, 40);
+            qctx.fillStyle = '#FFFFFF';
+            qctx.fillRect(18, 18, 24, 24);
+            qctx.fillStyle = '#22C55E';
+            qctx.fillRect(24, 24, 12, 12);
+
+            qctx.fillStyle = '#160B29';
+            qctx.fillRect(130, 10, 40, 40);
+            qctx.fillStyle = '#FFFFFF';
+            qctx.fillRect(138, 18, 24, 24);
+            qctx.fillStyle = '#6D28D9';
+            qctx.fillRect(144, 24, 12, 12);
+
+            qctx.fillStyle = '#160B29';
+            qctx.fillRect(10, 130, 40, 40);
+            qctx.fillStyle = '#FFFFFF';
+            qctx.fillRect(18, 138, 24, 24);
+            qctx.fillStyle = '#EF4444';
+            qctx.fillRect(24, 144, 12, 12);
+
+            qctx.fillStyle = '#160B29';
+            for (let x = 60; x < 120; x += 10) {
+                for (let y = 10; y < 170; y += 10) {
+                    if (Math.random() > 0.45) {
+                        qctx.fillRect(x, y, 8, 8);
+                    }
+                }
+            }
+        }
+
+        function openQRModal() {
+            document.getElementById('qrModal').classList.remove('hidden');
+            generateQR();
+        }
+
+        function closeQRModal() {
+            document.getElementById('qrModal').classList.add('hidden');
+        }
+
+        function copyURL() {
+            const tempInput = document.createElement('input');
+            tempInput.value = window.location.href;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            alert('¡Enlace de la web copiado!');
+        }
+
+        // FUNCIÓN DE EXPLOSIÓN GAMMA DE ENTRADA
+        function triggerGammaExplosion() {
+            const expCanvas = document.getElementById('explosionCanvas');
+            const expCtx = expCanvas.getContext('2d');
+            expCanvas.width = window.innerWidth;
+            expCanvas.height = window.innerHeight;
+
+            const particles = [];
+            const centerX = expCanvas.width / 2;
+            const centerY = expCanvas.height / 2;
+
+            // Generar onda expansiva de partículas gamma
+            for (let i = 0; i < 250; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 30 + 10;
+                particles.push({
+                    x: centerX,
+                    y: centerY,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    size: Math.random() * 25 + 8,
+                    color: ['#22C55E', '#10B981', '#EAB308', '#8B5CF6', '#EF4444', '#FFFFFF'][Math.floor(Math.random() * 6)],
+                    life: 60
+                });
+            }
+
+            let frame = 0;
+            function animateExplosion() {
+                expCtx.fillStyle = 'rgba(22, 11, 41, 0.2)';
+                expCtx.fillRect(0, 0, expCanvas.width, expCanvas.height);
+
+                // Destello central
+                expCtx.fillStyle = '#22C55E';
+                expCtx.beginPath();
+                expCtx.arc(centerX, centerY, frame * 35, 0, Math.PI * 2);
+                expCtx.fill();
+
+                particles.forEach((p) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life--;
+
+                    expCtx.fillStyle = p.color;
+                    expCtx.fillRect(p.x, p.y, p.size, p.size);
+                });
+
+                frame++;
+                if (frame < 35) {
+                    requestAnimationFrame(animateExplosion);
+                } else {
+                    document.getElementById('introOverlay').classList.add('exploded');
+                }
+            }
+
+            animateExplosion();
+        }
+
+        window.onload = function() {
+            mainRenderLoop();
+            initCardCrackCanvases();
+        };
+    </script>
+</body>
+</html>
